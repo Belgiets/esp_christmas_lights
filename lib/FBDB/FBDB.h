@@ -11,7 +11,7 @@ private:
   String _path;
 
 public:
-  FBDB(String firebaseHost, String _path);
+  FBDB(String firebaseHost, String path);
   void begin(void);
   ChristmasLights getValues();
 };
