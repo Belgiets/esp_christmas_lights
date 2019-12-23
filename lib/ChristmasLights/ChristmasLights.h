@@ -8,6 +8,7 @@ private:
   int _pin;
 
 public:
+  ChristmasLights(int pin);
   bool status;
   int level;
   int mode;
