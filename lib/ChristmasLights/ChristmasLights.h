@@ -12,6 +12,7 @@ public:
   bool status;
   int level;
   int mode;
+  void test(void);
 };
 
 #endif
