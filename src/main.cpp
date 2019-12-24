@@ -2,17 +2,64 @@
 #include <Storage.h>
 #include <CFWiFi.h>
 #include <FBDB.h>
+#include <ESP8266WebServer.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <ChristmasLights.h>
+#include <WSHtml.h>
+#include <RBD_Timer.h>
 
-int pinLed = 2;
+ESP8266WebServer server(80);
 IPAddress ipAP(10, 0, 1, 1);
 IPAddress ipGateway(10, 0, 1, 1);
 IPAddress subnetMask(255, 255, 255, 0);
 Storage storage;
 CFWiFi wf(ipAP, ipGateway, subnetMask);
 FBDB firebaseDB("christmas-ligths.firebaseio.com");
+WSHtml html;
+int pinLed = 2;
+ChristmasLights chrLights(pinLed);
+RBD::Timer firebaseTimer(1000);
+
+void createWebServer() {
+  server.on("/", []() {
+    String form = html.formWifiCreds();
+    String body = html.body(form, "Cat feeder: WiFi settings");
+
+    Serial.println("Show settings form");
+
+    server.send(200, "text/html", body);
+  });
+
+  server.on("/setting", []() {
+    String ssid = server.arg("ssid");
+    String pass = server.arg("pass");
+    String body =
+        html.body("Settings saved. Reset...", "Cat feeder: WiFi settings");
+
+    Serial.println("Saving wifi client settings");
+
+    if (ssid.length() > 0) {
+      Serial.println("Saving ssid");
+      storage.setSsid(ssid);
+    }
+
+    if (pass.length() > 0) {
+      Serial.println("Saving pass");
+      storage.setPass(pass);
+    }
+
+    if (ssid.length() > 0) {
+      // wf.stopAP();
+      // Serial.println("AP has been stopped");
+      // wf.connectToAP(ssid, pass);
+      server.send(200, "text/html", body);
+      ESP.restart();
+    }
+  });
+
+  server.begin();
+}
 
 void setup() {
   pinMode(pinLed, OUTPUT);
@@ -23,9 +70,6 @@ void setup() {
 
   String ssid = storage.getSsid();
   String pass = storage.getPass();
-
-  Serial.println("ssid " + ssid);
-  Serial.println("pass " + pass);
 
   if (ssid.length() > 0) {
     if (wf.connectToAP(ssid, pass)) {
@@ -42,17 +86,24 @@ void setup() {
     wf.runAP();
     Serial.println("AP started");
   }
+
+  chrLights.status = 0;
+  chrLights.level = 10;
+  chrLights.mode = 1;
 }
 
 void loop() {
-  if (wf.connectionStatus == true) {
-    // ChristmasLights chrLights = firebaseDB.getValues();
+  server.handleClient();
 
-    // Serial.println("chrLights.status - " + chrLights.status);
-    // if (chrLights.status == true) {
-    //   chrLights.test();
-    // }
-  }
+  chrLights.handle();
   
-  delay(1000);
+  // get data from firebase
+  if (firebaseTimer.isExpired()) {
+    if (wf.connectionStatus == true) {
+      FirebaseObject fbValues = firebaseDB.getValues();
+      chrLights.parseFBObject(fbValues);
+    }
+
+    firebaseTimer.restart();
+  }
 }

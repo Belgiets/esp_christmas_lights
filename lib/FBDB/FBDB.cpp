@@ -17,7 +17,9 @@ FirebaseObject FBDB::getValues() {
   
   if (Firebase.failed()) {
     Serial.println("Getting status data failed");
-    Serial.println(Firebase.error());  
+    Serial.println(Firebase.error());
+
+    return false;
   }
 
   return fbValues;
