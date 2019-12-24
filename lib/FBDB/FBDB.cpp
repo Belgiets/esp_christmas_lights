@@ -2,12 +2,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
-#include <ChristmasLights.h>
 
-FBDB::FBDB(String firebaseHost, String actionPath, int pinLed) {
+FBDB::FBDB(String firebaseHost) {
   _firebaseHost = firebaseHost;
-  _path = actionPath;
-  _pinLed = pinLed;
 };
 
 void FBDB::begin(void) {
@@ -15,25 +12,13 @@ void FBDB::begin(void) {
   Serial.println("Firebase started");
 };
 
-ChristmasLights FBDB::getValues() {
-  ChristmasLights chrLights(_pinLed);
-
-  Firebase.setBool("lamp", true);
-  // chrLights.status = Firebase.getInt(_path + "/status");
+FirebaseObject FBDB::getValues() {
+  FirebaseObject fbValues = Firebase.get("values");
+  
   if (Firebase.failed()) {
     Serial.println("Getting status data failed");
     Serial.println(Firebase.error());  
   }
 
-  // chrLights.level = Firebase.getInt(_path + "/level");
-  // if (Firebase.failed()) {
-  //   Serial.println("Getting level data failed");
-  // }
-  
-  // chrLights.mode = Firebase.getInt(_path + "/mode");
-  // if (Firebase.failed()) {
-  //   Serial.println("Getting mode data failed");
-  // }
-  
-  return chrLights;
+  return fbValues;
 };

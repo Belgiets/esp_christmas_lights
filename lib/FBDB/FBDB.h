@@ -3,18 +3,15 @@
 
 #include <Arduino.h>
 #include <FirebaseArduino.h>
-#include <ChristmasLights.h>
 
 class FBDB {
 private:
   String _firebaseHost;
-  String _path;
-  int _pinLed;
 
 public:
-  FBDB(String firebaseHost, String path, int pinLed);
+  FBDB(String firebaseHost);
   void begin(void);
-  ChristmasLights getValues();
+  FirebaseObject getValues();
 };
 
 #endif

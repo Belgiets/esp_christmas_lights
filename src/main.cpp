@@ -4,6 +4,7 @@
 #include <FBDB.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <ChristmasLights.h>
 
 int pinLed = 2;
 IPAddress ipAP(10, 0, 1, 1);
@@ -11,7 +12,7 @@ IPAddress ipGateway(10, 0, 1, 1);
 IPAddress subnetMask(255, 255, 255, 0);
 Storage storage;
 CFWiFi wf(ipAP, ipGateway, subnetMask);
-FBDB firebaseDB("https://christmas-ligths.firebaseio.com", "values", pinLed);
+FBDB firebaseDB("christmas-ligths.firebaseio.com");
 
 void setup() {
   pinMode(pinLed, OUTPUT);
@@ -45,7 +46,7 @@ void setup() {
 
 void loop() {
   if (wf.connectionStatus == true) {
-    ChristmasLights chrLights = firebaseDB.getValues();
+    // ChristmasLights chrLights = firebaseDB.getValues();
 
     // Serial.println("chrLights.status - " + chrLights.status);
     // if (chrLights.status == true) {
