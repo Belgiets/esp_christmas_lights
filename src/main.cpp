@@ -20,6 +20,10 @@ WSHtml html;
 int pinLed = 2;
 ChristmasLights chrLights(pinLed);
 RBD::Timer firebaseTimer(1000);
+RBD::Timer ledDelay = 50;
+RBD::Timer animationDelay = 1000;
+int step = 1;
+int minLevel = 20;
 
 void createWebServer() {
   server.on("/", []() {
@@ -95,7 +99,24 @@ void setup() {
 void loop() {
   server.handleClient();
 
-  chrLights.handle();
+  // chrLights.handle();
+  if (chrLights.status == 1) {
+    switch (chrLights.mode) {
+      case 1:
+        break;
+      case 2:
+        
+
+        break;
+      default:
+        break;
+    }
+
+    analogWrite(pinLed, 1023);
+  } else {
+    analogWrite(pinLed, 0);
+  }
+
   
   // get data from firebase
   if (firebaseTimer.isExpired()) {
