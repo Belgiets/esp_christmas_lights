@@ -90,34 +90,11 @@ void setup() {
     wf.runAP();
     Serial.println("AP started");
   }
-
-  chrLights.status = 0;
-  chrLights.level = 10;
-  chrLights.mode = 1;
 }
 
 void loop() {
   server.handleClient();
 
-  // chrLights.handle();
-  if (chrLights.status == 1) {
-    switch (chrLights.mode) {
-      case 1:
-        break;
-      case 2:
-        
-
-        break;
-      default:
-        break;
-    }
-
-    analogWrite(pinLed, 1023);
-  } else {
-    analogWrite(pinLed, 0);
-  }
-
-  
   // get data from firebase
   if (firebaseTimer.isExpired()) {
     if (wf.connectionStatus == true) {
@@ -127,4 +104,26 @@ void loop() {
 
     firebaseTimer.restart();
   }
+
+  if (chrLights.isUpdated()) {
+    
+  }
+
+  // chrLights.handle();
+  // if (chrLights.status == 1) {
+  //   switch (chrLights.mode) {
+  //     case 1:
+  //       break;
+  //     case 2:
+        
+
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   analogWrite(pinLed, 1023);
+  // } else {
+  //   analogWrite(pinLed, 0);
+  // }
 }
