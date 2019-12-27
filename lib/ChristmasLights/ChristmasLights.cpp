@@ -10,14 +10,6 @@ ChristmasLights::ChristmasLights(int pin) {
   clearStatuses();
 };
 
-void ChristmasLights::handle(void) {
-  if (status == 1) {
-    run(); 
-  } else {
-    stop();
-  }
-};
-
 void ChristmasLights::clearStatuses() {
   isStatusUpdated = false;
   isLevelUpdated = false;

@@ -10,9 +10,6 @@ private:
   bool prevStatus;
   int prevLevel;
   int prevMode;
-  bool isStatusUpdated;
-  bool isLevelUpdated;
-  bool isModeUpdated;
   void run(void);
   void stop(void);
   void clearStatuses();
@@ -23,7 +20,9 @@ public:
   int level;
   int mode;
   bool isUpdated();
-  void handle(void);
+  bool isStatusUpdated;
+  bool isLevelUpdated;
+  bool isModeUpdated;
   void parseFBObject(FirebaseObject jbObject);
 };
 

@@ -20,10 +20,12 @@ WSHtml html;
 int pinLed = 2;
 ChristmasLights chrLights(pinLed);
 RBD::Timer firebaseTimer(1000);
-RBD::Timer ledDelay = 50;
-RBD::Timer animationDelay = 1000;
-int step = 1;
-int minLevel = 20;
+// RBD::Timer modeSwitchDelay(1000);
+// RBD::Timer ledDelay(50);
+// int ledDelayUpIterator = 0;
+// int ledDelayDownIterator = 1023;
+// int modeSwitchDirection = 0;
+// int step = 1;
 
 void createWebServer() {
   server.on("/", []() {
@@ -90,6 +92,10 @@ void setup() {
     wf.runAP();
     Serial.println("AP started");
   }
+
+  firebaseTimer.restart();
+  // modeSwitchDelay.restart();
+  // ledDelay.restart();
 }
 
 void loop() {
@@ -97,6 +103,7 @@ void loop() {
 
   // get data from firebase
   if (firebaseTimer.isExpired()) {
+    Serial.println("firebaseTimer.isExpired");
     if (wf.connectionStatus == true) {
       FirebaseObject fbValues = firebaseDB.getValues();
       chrLights.parseFBObject(fbValues);
@@ -105,25 +112,48 @@ void loop() {
     firebaseTimer.restart();
   }
 
-  if (chrLights.isUpdated()) {
-    
-  }
-
-  // chrLights.handle();
-  // if (chrLights.status == 1) {
-  //   switch (chrLights.mode) {
-  //     case 1:
-  //       break;
-  //     case 2:
-        
-
-  //       break;
-  //     default:
-  //       break;
+  // if (chrLights.status == 1 && chrLights.mode == 2) {    
+  //   if (modeSwitchDelay.isExpired()) {
+  //     modeSwitchDirection = (modeSwitchDirection == 0) ? 1 : 0;
+  //     ledDelayUpIterator = 0;
+  //     ledDelayDownIterator = 1023;
   //   }
 
-  //   analogWrite(pinLed, 1023);
-  // } else {
-  //   analogWrite(pinLed, 0);
+  //   if (ledDelay.isExpired()) {
+  //     //go up or down
+  //     if (modeSwitchDirection == 0) {
+  //       analogWrite(pinLed, ledDelayUpIterator);
+  //       ledDelayUpIterator += step;
+
+  //       if (ledDelayDownIterator >= 1024) {
+  //         modeSwitchDirection = 1;
+  //       }
+  //     } else {
+  //       analogWrite(pinLed, ledDelayDownIterator);
+  //       ledDelayUpIterator -= step;
+
+  //       if (ledDelayDownIterator <= 0) {
+  //         modeSwitchDirection = 0;
+  //       }
+  //     }
+
+  //     ledDelay.restart();
+  //   }
+
+  //   modeSwitchDelay.restart();
   // }
+
+  if (chrLights.isUpdated()) {
+    Serial.println("chrLights.isUpdated");
+    if (chrLights.isStatusUpdated == true) {
+      Serial.println("chrLights.isStatusUpdated");
+      if (chrLights.status == 1 && chrLights.mode == 1) {
+        //TODO: enable
+        analogWrite(pinLed, 1023);
+      } else {
+        //TODO: disable
+        analogWrite(pinLed, 0);
+      }
+    }
+  }
 }
