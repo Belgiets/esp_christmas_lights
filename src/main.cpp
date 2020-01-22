@@ -105,11 +105,11 @@ void loop() {
     firebaseTimer.restart();
   }
 
-  if (chrLights.isUpdated()) {
+  // if (chrLights.isUpdated()) {
     
-  }
+  // }
 
-  // chrLights.handle();
+  chrLights.handle();
   // if (chrLights.status == 1) {
   //   switch (chrLights.mode) {
   //     case 1:
